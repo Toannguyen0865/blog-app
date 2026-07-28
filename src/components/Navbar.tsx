@@ -24,7 +24,15 @@ interface UserSession {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<UserSession | null>(null);
+  const [user, setUser] = useState<UserSession | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("devvibe_user_cache");
+        if (cached) return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return null;
+  });
   const [showMenu, setShowMenu] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notifyModal, setNotifyModal] = useState<NotificationModalProps | null>(null);
@@ -67,6 +75,9 @@ export default function Navbar() {
         const data = await res.json();
         if (data.authenticated && data.user) {
           setUser(data.user);
+          try {
+            localStorage.setItem("devvibe_user_cache", JSON.stringify(data.user));
+          } catch (e) {}
           setLoading(false);
           return;
         }
@@ -81,19 +92,29 @@ export default function Navbar() {
       if (adminRes.ok) {
         const adminData = await adminRes.json();
         if (adminData.authenticated && adminData.admin) {
-          setUser({
+          const adminObj = {
             id: adminData.admin.id,
             name: `${adminData.admin.username} (Admin)`,
             email: "admin@devvibe.com",
             avatar: null,
-          });
+          };
+          setUser(adminObj);
+          try {
+            localStorage.setItem("devvibe_user_cache", JSON.stringify(adminObj));
+          } catch (e) {}
           setLoading(false);
           return;
         }
       }
 
+      try {
+        localStorage.removeItem("devvibe_user_cache");
+      } catch (e) {}
       setUser(null);
     } catch (err) {
+      try {
+        localStorage.removeItem("devvibe_user_cache");
+      } catch (e) {}
       setUser(null);
     } finally {
       setLoading(false);
@@ -127,6 +148,9 @@ export default function Navbar() {
         try {
           await fetch("/api/auth/user/logout", { method: "POST" });
           await fetch("/api/auth/admin/logout", { method: "POST" }).catch(() => {});
+          try {
+            localStorage.removeItem("devvibe_user_cache");
+          } catch (e) {}
           setUser(null);
           setNotifyModal(null);
           window.dispatchEvent(new Event("user_auth_change"));
@@ -171,7 +195,7 @@ export default function Navbar() {
 
         {/* Góc phải: Thông tin người dùng hoặc Nút Đăng nhập/Đăng ký */}
         <div className="navbar-actions">
-          {!loading && !isAdminPage && (
+          {!isAdminPage && (
             user ? (
               <div style={{ position: "relative", width: "100%" }} ref={menuRef}>
                 <div
@@ -341,6 +365,15 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
+            ) : loading ? (
+              <div
+                className="skeleton"
+                style={{
+                  width: "140px",
+                  height: "40px",
+                  borderRadius: "30px",
+                }}
+              />
             ) : (
               !isAuthPage && (
                 <div className="auth-buttons-group">
