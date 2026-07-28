@@ -25,14 +25,23 @@ export async function GET() {
       return NextResponse.json({ authenticated: false }, { status: 200, headers: noCacheHeaders });
     }
 
+    const user = await prisma.user.findUnique({
+      where: { id: Number(session.id) },
+      select: { id: true, name: true, email: true, avatar: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ authenticated: false }, { status: 200, headers: noCacheHeaders });
+    }
+
     return NextResponse.json(
       {
         authenticated: true,
         user: {
-          id: session.id,
-          name: session.name,
-          email: session.email,
-          avatar: session.avatar || null,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          avatar: user.avatar || null,
         },
       },
       { status: 200, headers: noCacheHeaders }

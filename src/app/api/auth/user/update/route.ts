@@ -93,9 +93,10 @@ export async function PUT(request: Request) {
 
     // Cập nhật cookie session
     const sessionData = JSON.stringify({
-      ...session,
+      id: updatedUser.id,
       name: updatedUser.name,
-      avatar: updatedUser.avatar,
+      email: updatedUser.email,
+      loggedInAt: session.loggedInAt || Date.now(),
     });
 
     cookieStore.set("user_session", sessionData, {

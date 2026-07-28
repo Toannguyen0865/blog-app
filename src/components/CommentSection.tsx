@@ -13,7 +13,9 @@ import {
   Edit2,
   Trash2,
 } from "lucide-react";
-import NotificationModal, { NotificationModalProps } from "@/components/NotificationModal";
+import NotificationModal, {
+  NotificationModalProps,
+} from "@/components/NotificationModal";
 
 interface CommentUser {
   id: number;
@@ -75,7 +77,10 @@ function CommentNode({
   // Tìm các câu trả lời trực tiếp cho bình luận này, sắp xếp theo thời gian tăng dần (cũ trước, mới sau)
   const replies = allComments
     .filter((c) => c.parentId === comment.id)
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
 
   const isCollapsed = collapsedThreads[comment.id] || false;
   const isReplying = activeReplyId === comment.id;
@@ -106,8 +111,14 @@ function CommentNode({
         className="glass-panel"
         style={{
           padding: depth > 0 ? "1rem 1.25rem" : "1.25rem 1.5rem",
-          border: depth > 0 ? "1px solid rgba(255, 255, 255, 0.55)" : "1px solid rgba(255, 255, 255, 0.8)",
-          background: depth > 0 ? "rgba(255, 255, 255, 0.55)" : "rgba(255, 255, 255, 0.7)",
+          border:
+            depth > 0
+              ? "1px solid rgba(255, 255, 255, 0.55)"
+              : "1px solid rgba(255, 255, 255, 0.8)",
+          background:
+            depth > 0
+              ? "rgba(255, 255, 255, 0.55)"
+              : "rgba(255, 255, 255, 0.7)",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.03)",
           borderRadius: "14px",
         }}
@@ -123,7 +134,9 @@ function CommentNode({
             gap: "0.5rem",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}
+          >
             {comment.user.avatar ? (
               <img
                 src={comment.user.avatar}
@@ -207,7 +220,10 @@ function CommentNode({
                 return;
               }
               setSubmittingEdit(true);
-              const success = await handleEditComment(comment.id, editText.trim());
+              const success = await handleEditComment(
+                comment.id,
+                editText.trim(),
+              );
               setSubmittingEdit(false);
               if (success) {
                 setIsEditing(false);
@@ -444,7 +460,7 @@ function CommentNode({
               }}
             >
               {isCollapsed ? (
-                <>💬 Xem {replies.length} câu trả lời ▾</>
+                <>Xem {replies.length} câu trả lời ▾</>
               ) : (
                 <>Ẩn câu trả lời ▴</>
               )}
@@ -528,7 +544,10 @@ function CommentNode({
                     alignItems: "center",
                     gap: "0.35rem",
                     opacity: submittingReply || !replyText.trim() ? 0.6 : 1,
-                    cursor: submittingReply || !replyText.trim() ? "not-allowed" : "pointer",
+                    cursor:
+                      submittingReply || !replyText.trim()
+                        ? "not-allowed"
+                        : "pointer",
                   }}
                 >
                   {submittingReply ? (
@@ -589,7 +608,9 @@ export default function CommentSection({ postId }: { postId: number }) {
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
-  const [notifyModal, setNotifyModal] = useState<NotificationModalProps | null>(null);
+  const [notifyModal, setNotifyModal] = useState<NotificationModalProps | null>(
+    null,
+  );
 
   // Form states cho bình luận cha (top-level comment)
   const [newCommentText, setNewCommentText] = useState("");
@@ -736,7 +757,9 @@ export default function CommentSection({ postId }: { postId: number }) {
       const data = await res.json();
       if (res.ok) {
         setComments((prev) =>
-          prev.map((c) => (c.id === commentId ? { ...c, content: data.content } : c))
+          prev.map((c) =>
+            c.id === commentId ? { ...c, content: data.content } : c,
+          ),
         );
         return true;
       } else {
@@ -776,7 +799,11 @@ export default function CommentSection({ postId }: { postId: number }) {
           while (added) {
             added = false;
             for (const c of prev) {
-              if (c.parentId && idsToDelete.has(c.parentId) && !idsToDelete.has(c.id)) {
+              if (
+                c.parentId &&
+                idsToDelete.has(c.parentId) &&
+                !idsToDelete.has(c.id)
+              ) {
                 idsToDelete.add(c.id);
                 added = true;
               }
@@ -846,8 +873,7 @@ export default function CommentSection({ postId }: { postId: number }) {
             width: "36px",
             height: "36px",
             borderRadius: "10px",
-            background:
-              "linear-gradient(135deg, var(--primary-blue), #7c3aed)",
+            background: "linear-gradient(135deg, var(--primary-blue), #7c3aed)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -978,8 +1004,7 @@ export default function CommentSection({ postId }: { postId: number }) {
                   padding: "0.6rem 1.4rem",
                   borderRadius: "12px",
                   fontWeight: 600,
-                  opacity:
-                    submitting || !newCommentText.trim() ? 0.6 : 1,
+                  opacity: submitting || !newCommentText.trim() ? 0.6 : 1,
                   cursor:
                     submitting || !newCommentText.trim()
                       ? "not-allowed"
@@ -1043,8 +1068,8 @@ export default function CommentSection({ postId }: { postId: number }) {
               lineHeight: 1.5,
             }}
           >
-            Vui lòng đăng nhập tài khoản độc giả để để lại ý kiến và trao đổi cùng
-            cộng đồng DevVibe.
+            Vui lòng đăng nhập tài khoản độc giả để để lại ý kiến và trao đổi
+            cùng cộng đồng DevVibe.
           </p>
           <div
             style={{
@@ -1132,7 +1157,8 @@ export default function CommentSection({ postId }: { postId: number }) {
               margin: 0,
             }}
           >
-            Chưa có bình luận nào. Hãy là người đầu tiên thảo luận về bài viết này!
+            Chưa có bình luận nào. Hãy là người đầu tiên thảo luận về bài viết
+            này!
           </p>
         </div>
       ) : (

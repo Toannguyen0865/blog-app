@@ -47,7 +47,6 @@ export async function POST(request: Request) {
       id: newUser.id,
       name: newUser.name,
       email: newUser.email,
-      avatar: newUser.avatar,
       loggedInAt: Date.now(),
     });
 
