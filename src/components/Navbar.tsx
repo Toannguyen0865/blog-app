@@ -58,7 +58,10 @@ export default function Navbar() {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch("/api/auth/user/me");
+      const res = await fetch("/api/auth/user/me", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.authenticated) {

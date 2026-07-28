@@ -46,9 +46,11 @@ function LoginForm() {
       const data = await res.json();
 
       if (res.ok) {
-        window.dispatchEvent(new Event("user_auth_change"));
         router.push(returnUrl);
         router.refresh();
+        setTimeout(() => {
+          window.dispatchEvent(new Event("user_auth_change"));
+        }, 150);
       } else {
         setError(data.error || "Đăng nhập thất bại.");
       }
