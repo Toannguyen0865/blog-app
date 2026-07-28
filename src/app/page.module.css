@@ -56,7 +56,8 @@
 }
 
 .content {
-  color: var(--text-main);
+  color: var(--text-muted);
+  font-size: 0.875rem;
   line-height: 1.6;
   flex-grow: 1;
 }
@@ -113,7 +114,8 @@
     text-overflow: ellipsis;
   }
   .content {
-    font-size: 0.85rem !important;
+    color: var(--text-muted) !important;
+    font-size: 0.725rem !important;
     line-height: 1.45 !important;
     display: -webkit-box;
     -webkit-line-clamp: 3;

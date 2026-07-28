@@ -10,6 +10,7 @@ import {
   Flame,
 } from "lucide-react";
 import styles from "@/app/page.module.css";
+import LikeButton from "@/components/LikeButton";
 
 interface Post {
   id: number;
@@ -295,6 +296,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                             &bull;{" "}
                             {new Date(post.createdAt).toLocaleDateString("vi-VN")}
                           </span>
+                          <LikeButton postId={post.id} initialLikes={(post as any).likes || 0} variant="badge" />
                         </div>
 
                         {post.tags && (
@@ -348,7 +350,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                           style={{
                             color: "var(--text-muted)",
                             lineHeight: 1.6,
-                            fontSize: "1.02rem",
+                            fontSize: "0.895rem",
                             marginBottom: "1.5rem",
                             display: "-webkit-box",
                             WebkitLineClamp: 3,

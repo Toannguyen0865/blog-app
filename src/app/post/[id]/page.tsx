@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import styles from "./page.module.css";
 import Navbar from "@/components/Navbar";
 import CommentSection from "@/components/CommentSection";
+import LikeButton from "@/components/LikeButton";
 
 import type { Metadata } from "next";
 
@@ -140,9 +141,11 @@ export default async function SinglePostPage({
             style={{
               width: "100%",
               maxHeight: "500px",
+              aspectRatio: "16 / 9",
               overflow: "hidden",
               borderRadius: "16px",
               marginBottom: "2rem",
+              background: "rgba(37, 99, 235, 0.05)",
             }}
           >
             <img
@@ -155,6 +158,18 @@ export default async function SinglePostPage({
 
         <article className={`glass-panel ${styles.markdownContent}`}>
           <ReactMarkdown>{post.content}</ReactMarkdown>
+          <div
+            style={{
+              marginTop: "2.5rem",
+              paddingTop: "1.5rem",
+              borderTop: "1px solid var(--card-border)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <LikeButton postId={post.id} initialLikes={(post as any).likes || 0} />
+          </div>
         </article>
 
         {/* Khối thảo luận & bình luận */}

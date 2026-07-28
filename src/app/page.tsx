@@ -7,6 +7,7 @@ import TagBar from "@/components/TagBar";
 import HeroSlider from "@/components/HeroSlider";
 import Navbar from "@/components/Navbar";
 import Pagination from "@/components/Pagination";
+import LikeButton from "@/components/LikeButton";
 
 export const dynamic = "force-dynamic";
 
@@ -241,17 +242,32 @@ export default async function Home({
                       </div>
                     )}
                     <h2>{post.title}</h2>
-                    <div className={styles.meta}>
-                      <span>Bởi {post.author}</span> &bull;
-                      <span>
-                        {new Date(post.createdAt).toLocaleDateString("vi-VN")}
-                      </span>
-                    </div>
                     <p className={styles.content}>
                       {post.content.length > 150
                         ? post.content.substring(0, 150) + "..."
                         : post.content}
                     </p>
+                    <div
+                      className={styles.meta}
+                      style={{
+                        marginTop: "auto",
+                        paddingTop: "0.85rem",
+                        borderTop: "1px solid var(--card-border)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem",
+                        flexWrap: "wrap",
+                        marginBottom: 0,
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                        <span>Bởi {post.author}</span> &bull;{" "}
+                        <span>
+                          {new Date(post.createdAt).toLocaleDateString("vi-VN")}
+                        </span>
+                      </div>
+                      <LikeButton postId={post.id} initialLikes={post.likes || 0} variant="badge" />
+                    </div>
                   </div>
                 </article>
               </Link>

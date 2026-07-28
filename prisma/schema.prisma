@@ -20,6 +20,7 @@ model Post {
   author    String    @default("Admin")
   imageUrl  String?
   tags      String?   @default("lập trình, công nghệ")
+  likes     Int       @default(0)
   comments  Comment[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
