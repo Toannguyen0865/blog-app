@@ -40,8 +40,6 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
 
   if (!posts || posts.length === 0) return null;
 
-  const currentPost = posts[currentIndex] || posts[0];
-
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev - 1 + posts.length) % posts.length);
   };
@@ -106,7 +104,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
           </h2>
         </div>
 
-        {/* {posts.length > 1 && (
+        {posts.length > 1 && (
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span
               style={{
@@ -179,16 +177,18 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
               <ChevronRight size={18} />
             </button>
           </div>
-        )} */}
+        )}
       </div>
 
-      {/* Khối hiển thị Slide từng bài */}
+      {/* Khối hiển thị Carousel Track ngang */}
       <div
         style={{
           position: "relative",
           overflow: "hidden",
           borderRadius: "20px",
           touchAction: "pan-y",
+          background: "rgba(255, 255, 255, 0.2)",
+          padding: "2px 0",
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -196,158 +196,185 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <Link
-          href={`/post/${currentPost.id}`}
-          onClick={(e) => {
-            if (isSwiping) {
-              e.preventDefault();
-            }
+        <div
+          style={{
+            display: "flex",
+            transition: isSwiping
+              ? "none"
+              : "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
+            transform: `translateX(-${currentIndex * 100}%)`,
+            width: "100%",
           }}
-          style={{ display: "block", textDecoration: "none" }}
         >
-          <article
-            key={currentPost.id}
-            className="glass-panel animate-fade-in"
-            style={{
-              padding: 0,
-              overflow: "hidden",
-              transition: "all 0.3s ease",
-              border: "1px solid rgba(255, 255, 255, 0.8)",
-              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.08)",
-              margin: 0,
-            }}
-          >
-            <div className={styles.heroLayout}>
-              {currentPost.imageUrl && (
-                <div className={styles.heroImageWrapper}>
-                  <img
-                    src={currentPost.imageUrl}
-                    alt={currentPost.title}
-                    className={styles.cardImage}
-                  />
-                </div>
-              )}
-              <div className={styles.heroBody}>
-                <div
+          {posts.map((post, idx) => (
+            <div
+              key={post.id}
+              style={{
+                width: "100%",
+                flexShrink: 0,
+                transition: "opacity 0.4s ease, transform 0.4s ease",
+                opacity: idx === currentIndex ? 1 : 0.5,
+                transform: idx === currentIndex ? "scale(1)" : "scale(0.98)",
+              }}
+            >
+              <Link
+                href={`/post/${post.id}`}
+                onClick={(e) => {
+                  if (isSwiping) {
+                    e.preventDefault();
+                  }
+                }}
+                style={{ display: "block", textDecoration: "none" }}
+              >
+                <article
+                  className="glass-panel"
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    marginBottom: "0.85rem",
-                    flexWrap: "wrap",
+                    padding: 0,
+                    overflow: "hidden",
+                    transition: "all 0.3s ease",
+                    border: "1px solid rgba(255, 255, 255, 0.8)",
+                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.08)",
+                    margin: 0,
                   }}
                 >
-                  <span
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.3rem",
-                      padding: "0.25rem 0.75rem",
-                      background: "rgba(37, 99, 235, 0.12)",
-                      color: "var(--primary-blue)",
-                      borderRadius: "20px",
-                      fontSize: "0.8rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    <Sparkles size={14} /> Nổi bật nhất #{currentIndex + 1}
-                  </span>
-                  <span
-                    style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}
-                  >
-                    &bull; Bởi {currentPost.author}
-                  </span>
-                  <span
-                    style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}
-                  >
-                    &bull;{" "}
-                    {new Date(currentPost.createdAt).toLocaleDateString(
-                      "vi-VN",
+                  <div className={styles.heroLayout}>
+                    {post.imageUrl && (
+                      <div className={styles.heroImageWrapper}>
+                        <img
+                          src={post.imageUrl}
+                          alt={post.title}
+                          className={styles.cardImage}
+                        />
+                      </div>
                     )}
-                  </span>
-                </div>
-
-                {currentPost.tags && (
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.4rem",
-                      flexWrap: "wrap",
-                      marginBottom: "0.65rem",
-                    }}
-                  >
-                    {currentPost.tags.split(",").map((t: string) => {
-                      const cleanTag = t.trim().replace(/^#/, "");
-                      if (!cleanTag) return null;
-                      return (
+                    <div className={styles.heroBody}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          marginBottom: "0.85rem",
+                          flexWrap: "wrap",
+                        }}
+                      >
                         <span
-                          key={cleanTag}
                           style={{
-                            padding: "0.2rem 0.65rem",
-                            background: "rgba(124, 58, 237, 0.12)",
-                            color: "#7c3aed",
-                            borderRadius: "14px",
-                            fontSize: "0.78rem",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.3rem",
+                            padding: "0.25rem 0.75rem",
+                            background: "rgba(37, 99, 235, 0.12)",
+                            color: "var(--primary-blue)",
+                            borderRadius: "20px",
+                            fontSize: "0.8rem",
                             fontWeight: 600,
                           }}
                         >
-                          #{cleanTag}
+                          <Sparkles size={14} /> Nổi bật #{idx + 1}
                         </span>
-                      );
-                    })}
+                        <span
+                          style={{
+                            color: "var(--text-muted)",
+                            fontSize: "0.85rem",
+                          }}
+                        >
+                          &bull; Bởi {post.author}
+                        </span>
+                        <span
+                          style={{
+                            color: "var(--text-muted)",
+                            fontSize: "0.85rem",
+                          }}
+                        >
+                          &bull;{" "}
+                          {new Date(post.createdAt).toLocaleDateString("vi-VN")}
+                        </span>
+                      </div>
+
+                      {post.tags && (
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "0.4rem",
+                            flexWrap: "wrap",
+                            marginBottom: "0.65rem",
+                          }}
+                        >
+                          {post.tags.split(",").map((t: string) => {
+                            const cleanTag = t.trim().replace(/^#/, "");
+                            if (!cleanTag) return null;
+                            return (
+                              <span
+                                key={cleanTag}
+                                style={{
+                                  padding: "0.2rem 0.65rem",
+                                  background: "rgba(124, 58, 237, 0.12)",
+                                  color: "#7c3aed",
+                                  borderRadius: "14px",
+                                  fontSize: "0.78rem",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                #{cleanTag}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      <h2
+                        style={{
+                          fontSize: "1.85rem",
+                          fontWeight: 800,
+                          color: "var(--text-main)",
+                          marginBottom: "0.85rem",
+                          lineHeight: 1.35,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {post.title}
+                      </h2>
+
+                      <p
+                        style={{
+                          color: "var(--text-muted)",
+                          lineHeight: 1.6,
+                          fontSize: "1.02rem",
+                          marginBottom: "1.5rem",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 3,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {post.content}
+                      </p>
+
+                      <div>
+                        <span
+                          className="btn-primary"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            padding: "0.65rem 1.4rem",
+                            borderRadius: "12px",
+                            fontWeight: 600,
+                          }}
+                        >
+                          <BookOpen size={18} /> Đọc bài viết &rarr;
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                )}
-
-                <h2
-                  style={{
-                    fontSize: "1.85rem",
-                    fontWeight: 800,
-                    color: "var(--text-main)",
-                    marginBottom: "0.85rem",
-                    lineHeight: 1.35,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {currentPost.title}
-                </h2>
-
-                <p
-                  style={{
-                    color: "var(--text-muted)",
-                    lineHeight: 1.6,
-                    fontSize: "1.02rem",
-                    marginBottom: "1.5rem",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {currentPost.content}
-                </p>
-
-                <div>
-                  <span
-                    className="btn-primary"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      padding: "0.65rem 1.4rem",
-                      borderRadius: "12px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    <BookOpen size={18} /> Đọc bài viết &rarr;
-                  </span>
-                </div>
-              </div>
+                </article>
+              </Link>
             </div>
-          </article>
-        </Link>
+          ))}
+        </div>
       </div>
 
       {/* Chấm tròn chỉ số điều hướng (Indicator Dots) */}
@@ -370,7 +397,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                 onClick={() => setCurrentIndex(idx)}
                 aria-label={`Chuyển đến bài ${idx + 1}`}
                 style={{
-                  width: isActive ? "28px" : "10px",
+                  width: isActive ? "32px" : "10px",
                   height: "10px",
                   borderRadius: "10px",
                   background: isActive
