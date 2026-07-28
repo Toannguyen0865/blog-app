@@ -1118,22 +1118,30 @@ export default function CommentSection({ postId }: { postId: number }) {
 
       {/* Danh sách bình luận theo dạng cây thảo luận */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: "3rem 0" }}>
-          <Loader2
-            className="animate-spin"
-            size={28}
-            color="var(--primary-blue)"
-            style={{ margin: "0 auto" }}
-          />
-          <p
-            style={{
-              marginTop: "0.75rem",
-              color: "var(--text-muted)",
-              fontSize: "0.95rem",
-            }}
-          >
-            Đang tải bình luận...
-          </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", padding: "1rem 0" }}>
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                gap: "1rem",
+                padding: "1.25rem",
+                background: "rgba(255, 255, 255, 0.6)",
+                borderRadius: "16px",
+                border: "1px solid rgba(255, 255, 255, 0.5)",
+              }}
+            >
+              <div className="skeleton skeleton-avatar" style={{ width: "42px", height: "42px" }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}>
+                  <div className="skeleton skeleton-text" style={{ width: "120px", height: "16px", marginBottom: 0 }} />
+                  <div className="skeleton skeleton-text" style={{ width: "80px", height: "14px", marginBottom: 0 }} />
+                </div>
+                <div className="skeleton skeleton-text" style={{ width: "95%", height: "15px", marginBottom: "0.4rem" }} />
+                <div className="skeleton skeleton-text" style={{ width: "70%", height: "15px" }} />
+              </div>
+            </div>
+          ))}
         </div>
       ) : topLevelComments.length === 0 ? (
         <div
