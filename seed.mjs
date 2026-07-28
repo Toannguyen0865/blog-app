@@ -1,7 +1,17 @@
 import { PrismaClient } from '@prisma/client';
+import { scryptSync, randomBytes } from 'crypto';
 const prisma = new PrismaClient();
 
 async function main() {
+  const salt = randomBytes(16).toString('hex');
+  const hashedPassword = salt + ':' + scryptSync('123456', salt, 64).toString('hex');
+  await prisma.admin.upsert({
+    where: { username: 'admin' },
+    update: { password: hashedPassword },
+    create: { username: 'admin', password: hashedPassword }
+  });
+  console.log('Đã tạo/cập nhật tài khoản admin thành công (admin / 123456)');
+
   // Clear existing posts
   await prisma.post.deleteMany({});
   
