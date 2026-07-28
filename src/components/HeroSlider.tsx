@@ -25,6 +25,11 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Touch swipe states for mobile devices
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const [isSwiping, setIsSwiping] = useState(false);
+
   useEffect(() => {
     if (posts.length <= 1 || isHovered) return;
     const interval = setInterval(() => {
@@ -43,6 +48,35 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % posts.length);
+  };
+
+  const minSwipeDistance = 40;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEndX(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+    setIsSwiping(false);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    const currentX = e.targetTouches[0].clientX;
+    setTouchEndX(currentX);
+    if (touchStartX && Math.abs(currentX - touchStartX) > 10) {
+      setIsSwiping(true);
+    }
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartX || !touchEndX) return;
+    const distance = touchStartX - touchEndX;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      nextSlide();
+    }
+    if (isRightSwipe) {
+      prevSlide();
+    }
   };
 
   return (
@@ -154,12 +188,21 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
           position: "relative",
           overflow: "hidden",
           borderRadius: "20px",
+          touchAction: "pan-y",
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         <Link
           href={`/post/${currentPost.id}`}
+          onClick={(e) => {
+            if (isSwiping) {
+              e.preventDefault();
+            }
+          }}
           style={{ display: "block", textDecoration: "none" }}
         >
           <article
