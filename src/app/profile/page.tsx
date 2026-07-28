@@ -290,19 +290,19 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className={styles.profileContainer}>
-        <div
-          className={styles.profileCard}
-          style={{ textAlign: "center", padding: "5rem 2rem" }}
-        >
-          <RefreshCw
-            size={36}
-            className="animate-spin"
-            color="var(--primary-blue)"
-            style={{ margin: "0 auto 1rem" }}
-          />
-          <p style={{ color: "var(--text-muted)", fontSize: "1.05rem" }}>
-            Đang tải hồ sơ DevVibe của bạn...
-          </p>
+        <div className={styles.profileCard} style={{ padding: "2.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginBottom: "2rem" }}>
+            <div className="skeleton skeleton-avatar" style={{ width: "80px", height: "80px" }} />
+            <div style={{ flex: 1 }}>
+              <div className="skeleton skeleton-title" style={{ width: "220px", height: "24px", marginBottom: "0.5rem" }} />
+              <div className="skeleton skeleton-text" style={{ width: "160px" }} />
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div className="skeleton" style={{ width: "100%", height: "48px", borderRadius: "10px" }} />
+            <div className="skeleton" style={{ width: "100%", height: "48px", borderRadius: "10px" }} />
+            <div className="skeleton" style={{ width: "100%", height: "48px", borderRadius: "10px" }} />
+          </div>
         </div>
       </div>
     );

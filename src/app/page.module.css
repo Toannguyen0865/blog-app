@@ -66,6 +66,7 @@
   display: grid;
   grid-template-columns: 1.15fr 1fr;
   height: 420px;
+  min-height: 420px;
   overflow: hidden;
 }
 
@@ -123,8 +124,10 @@
   /* Hero responsive override */
   .heroLayout {
     grid-template-columns: 1fr !important;
-    height: auto !important;
-    min-height: 500px !important;
+    height: 520px !important;
+    min-height: 520px !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   .heroImageWrapper {
     height: 220px !important;
@@ -185,8 +188,10 @@
     -webkit-line-clamp: 2;
   }
   .heroLayout {
-    height: auto !important;
-    min-height: 440px !important;
+    height: 480px !important;
+    min-height: 480px !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   .heroImageWrapper {
     height: 180px !important;

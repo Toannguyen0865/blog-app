@@ -199,6 +199,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
         <div
           style={{
             display: "flex",
+            alignItems: "stretch",
             transition: isSwiping
               ? "none"
               : "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
@@ -212,6 +213,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
               style={{
                 width: "100%",
                 flexShrink: 0,
+                display: "flex",
                 transition: "opacity 0.4s ease, transform 0.4s ease",
                 opacity: idx === currentIndex ? 1 : 0.5,
                 transform: idx === currentIndex ? "scale(1)" : "scale(0.98)",
@@ -224,7 +226,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                     e.preventDefault();
                   }
                 }}
-                style={{ display: "block", textDecoration: "none" }}
+                style={{ display: "flex", width: "100%", textDecoration: "none" }}
               >
                 <article
                   className="glass-panel"
@@ -235,9 +237,12 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                     border: "1px solid rgba(255, 255, 255, 0.8)",
                     boxShadow: "0 20px 40px rgba(0, 0, 0, 0.08)",
                     margin: 0,
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
-                  <div className={styles.heroLayout}>
+                  <div className={styles.heroLayout} style={{ flex: 1, height: "100%", width: "100%" }}>
                     {post.imageUrl && (
                       <div className={styles.heroImageWrapper}>
                         <img
