@@ -607,7 +607,15 @@ export default function CommentSection({ postId }: { postId: number }) {
   const router = useRouter();
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("devvibe_user_cache");
+        if (cached) return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return null;
+  });
   const [notifyModal, setNotifyModal] = useState<NotificationModalProps | null>(
     null,
   );
@@ -641,18 +649,53 @@ export default function CommentSection({ postId }: { postId: number }) {
 
   const fetchCurrentUser = async () => {
     try {
-      const res = await fetch("/api/auth/user/me");
+      const res = await fetch("/api/auth/user/me", {
+        cache: "no-store",
+        credentials: "include",
+        headers: { "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
-        if (data.authenticated) {
+        if (data.authenticated && data.user) {
           setCurrentUser(data.user);
-        } else {
-          setCurrentUser(null);
+          try {
+            localStorage.setItem("devvibe_user_cache", JSON.stringify(data.user));
+          } catch (e) {}
+          return;
         }
-      } else {
-        setCurrentUser(null);
       }
+
+      // Check admin
+      const adminRes = await fetch("/api/auth/admin/check", {
+        cache: "no-store",
+        credentials: "include",
+        headers: { "Cache-Control": "no-cache" },
+      });
+      if (adminRes.ok) {
+        const adminData = await adminRes.json();
+        if (adminData.authenticated && adminData.admin) {
+          const adminObj = {
+            id: adminData.admin.id,
+            name: `${adminData.admin.username} (Admin)`,
+            email: "admin@devvibe.com",
+            avatar: null,
+          };
+          setCurrentUser(adminObj);
+          try {
+            localStorage.setItem("devvibe_user_cache", JSON.stringify(adminObj));
+          } catch (e) {}
+          return;
+        }
+      }
+
+      try {
+        localStorage.removeItem("devvibe_user_cache");
+      } catch (e) {}
+      setCurrentUser(null);
     } catch (err) {
+      try {
+        localStorage.removeItem("devvibe_user_cache");
+      } catch (e) {}
       setCurrentUser(null);
     }
   };
@@ -660,6 +703,12 @@ export default function CommentSection({ postId }: { postId: number }) {
   useEffect(() => {
     fetchComments();
     fetchCurrentUser();
+    window.addEventListener("user_auth_change", fetchCurrentUser);
+    window.addEventListener("admin_auth_change", fetchCurrentUser);
+    return () => {
+      window.removeEventListener("user_auth_change", fetchCurrentUser);
+      window.removeEventListener("admin_auth_change", fetchCurrentUser);
+    };
   }, [postId]);
 
   const handlePostComment = async (e: React.FormEvent) => {

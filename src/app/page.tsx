@@ -45,9 +45,9 @@ export default async function Home({
 
   // Mục 4: Bài viết tiêu điểm (chỉ hiện ở trang chủ tổng khi không tìm kiếm, lọc hay sắp xếp khác)
   const isFiltering = Boolean(query || tag || sort !== "desc");
-  const featuredPosts = !isFiltering ? posts.slice(0, 5) : [];
+  const featuredPosts = !isFiltering ? posts.slice(0, 3) : [];
   const displayPosts = !isFiltering
-    ? posts.slice(Math.min(5, posts.length))
+    ? posts.slice(Math.min(3, posts.length))
     : posts;
 
   return (

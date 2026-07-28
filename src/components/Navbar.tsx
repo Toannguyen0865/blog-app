@@ -256,7 +256,15 @@ export default function Navbar() {
                   >
                     {user.name}
                   </span>
-                  <ChevronDown size={16} color="var(--text-muted)" />
+                  <ChevronDown
+                    size={16}
+                    color="var(--text-muted)"
+                    className="user-badge-chevron"
+                    style={{
+                      transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                      transform: showMenu ? "rotate(180deg)" : "rotate(0deg)",
+                    }}
+                  />
                 </div>
 
                 {showMenu && (
@@ -267,7 +275,9 @@ export default function Navbar() {
                       top: "100%",
                       right: 0,
                       marginTop: "0.35rem",
-                      minWidth: "230px",
+                      minWidth: "260px",
+                      width: "max-content",
+                      maxWidth: "calc(100vw - 2rem)",
                       padding: "1rem",
                       zIndex: 1000,
                       borderRadius: "16px",
@@ -278,44 +288,70 @@ export default function Navbar() {
                   >
                     <div
                       style={{
-                        paddingBottom: "0.75rem",
-                        marginBottom: "0.75rem",
+                        paddingBottom: "0.85rem",
+                        marginBottom: "0.85rem",
                         borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem",
                         textAlign: "left",
                       }}
                     >
                       <div
                         style={{
+                          width: "42px",
+                          height: "42px",
+                          borderRadius: "50%",
+                          background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+                          color: "white",
                           display: "flex",
                           alignItems: "center",
-                          gap: "0.6rem",
-                          marginBottom: "0.3rem",
+                          justifyContent: "center",
+                          fontWeight: 700,
+                          fontSize: "1.1rem",
+                          flexShrink: 0,
+                          border: "2px solid rgba(37, 99, 235, 0.2)",
                         }}
                       >
-                        <UserIcon size={16} color="var(--primary-blue)" />
+                        {user.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt={user.name}
+                            referrerPolicy="no-referrer"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          user.name.charAt(0).toUpperCase()
+                        )}
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", minWidth: 0, flex: 1 }}>
                         <p
                           style={{
                             margin: 0,
                             fontWeight: 700,
                             fontSize: "0.95rem",
                             color: "var(--text-main)",
+                            wordBreak: "break-word",
                           }}
                         >
                           {user.name}
                         </p>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: "0.82rem",
+                            color: "var(--text-muted)",
+                            wordBreak: "break-all",
+                          }}
+                        >
+                          {user.email}
+                        </p>
                       </div>
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: "0.82rem",
-                          color: "var(--text-muted)",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          paddingLeft: "1.4rem",
-                        }}
-                      >
-                        {user.email}
-                      </p>
                     </div>
 
                     <Link
@@ -325,8 +361,9 @@ export default function Navbar() {
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.6rem",
-                        padding: "0.6rem 0.8rem",
+                        justifyContent: "flex-start",
+                        gap: "0.65rem",
+                        padding: "0.65rem 0.9rem",
                         borderRadius: "10px",
                         color: "var(--text-main)",
                         textDecoration: "none",
@@ -338,7 +375,7 @@ export default function Navbar() {
                         border: "1px solid rgba(37, 99, 235, 0.15)",
                       }}
                     >
-                      <Settings size={16} color="var(--primary-blue)" /> Cài đặt hồ sơ
+                      <Settings size={18} color="var(--primary-blue)" /> Cài đặt hồ sơ
                     </Link>
 
                     <button
@@ -347,9 +384,9 @@ export default function Navbar() {
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        gap: "0.5rem",
-                        padding: "0.6rem 0.8rem",
+                        justifyContent: "flex-start",
+                        gap: "0.65rem",
+                        padding: "0.65rem 0.9rem",
                         borderRadius: "10px",
                         background: "rgba(239, 68, 68, 0.08)",
                         color: "#ef4444",
@@ -360,7 +397,7 @@ export default function Navbar() {
                         transition: "all 0.2s ease",
                       }}
                     >
-                      <LogOut size={16} /> Đăng xuất
+                      <LogOut size={18} /> Đăng xuất
                     </button>
                   </div>
                 )}

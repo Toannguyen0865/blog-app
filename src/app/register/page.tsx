@@ -64,6 +64,11 @@ function RegisterForm() {
       const data = await res.json();
 
       if (res.ok) {
+        try {
+          if (data.user) {
+            localStorage.setItem("devvibe_user_cache", JSON.stringify(data.user));
+          }
+        } catch (e) {}
         window.dispatchEvent(new Event("user_auth_change"));
         router.push(returnUrl);
         router.refresh();

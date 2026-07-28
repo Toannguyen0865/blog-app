@@ -329,15 +329,22 @@ h1 {
     gap: 0.35rem !important;
   }
   .user-badge-btn {
-    padding: 0.35rem 0.65rem !important;
-    gap: 0.4rem !important;
+    padding: 0.35rem 0.7rem !important;
+    border-radius: 30px !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 42px !important;
+    min-width: auto !important;
+    justify-content: center !important;
+    gap: 0.45rem !important;
+  }
+  .user-badge-btn img,
+  .user-badge-btn > div:first-child {
+    width: 28px !important;
+    height: 28px !important;
   }
   .user-badge-name {
-    max-width: 95px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    font-size: 0.85rem !important;
+    display: none !important;
   }
   .auth-buttons-group {
     display: flex !important;
