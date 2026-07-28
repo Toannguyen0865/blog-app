@@ -607,15 +607,8 @@ export default function CommentSection({ postId }: { postId: number }) {
   const router = useRouter();
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<UserSession | null>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cached = localStorage.getItem("devvibe_user_cache");
-        if (cached) return JSON.parse(cached);
-      } catch (e) {}
-    }
-    return null;
-  });
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [notifyModal, setNotifyModal] = useState<NotificationModalProps | null>(
     null,
   );
@@ -661,6 +654,7 @@ export default function CommentSection({ postId }: { postId: number }) {
           try {
             localStorage.setItem("devvibe_user_cache", JSON.stringify(data.user));
           } catch (e) {}
+          setAuthLoading(false);
           return;
         }
       }
@@ -684,6 +678,7 @@ export default function CommentSection({ postId }: { postId: number }) {
           try {
             localStorage.setItem("devvibe_user_cache", JSON.stringify(adminObj));
           } catch (e) {}
+          setAuthLoading(false);
           return;
         }
       }
@@ -693,14 +688,22 @@ export default function CommentSection({ postId }: { postId: number }) {
       } catch (e) {}
       setCurrentUser(null);
     } catch (err) {
-      try {
-        localStorage.removeItem("devvibe_user_cache");
-      } catch (e) {}
-      setCurrentUser(null);
+      // Khi chuyển trang hoặc abort request, tuyệt đối không xóa cache hay log out user
+      console.error("fetchCurrentUser error:", err);
+    } finally {
+      setAuthLoading(false);
     }
   };
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("devvibe_user_cache");
+      if (cached) {
+        setCurrentUser(JSON.parse(cached));
+        setAuthLoading(false);
+      }
+    } catch (e) {}
+
     fetchComments();
     fetchCurrentUser();
     window.addEventListener("user_auth_change", fetchCurrentUser);
@@ -931,8 +934,15 @@ export default function CommentSection({ postId }: { postId: number }) {
         >
           <MessageSquare size={18} />
         </div>
-        <h2 style={{ fontSize: "1.6rem", fontWeight: 800, margin: 0 }}>
-          Bình luận bài viết ({comments.length})
+        <h2 style={{ fontSize: "1.6rem", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          Bình luận bài viết{" "}
+          {loading ? (
+            <span style={{ fontSize: "1.3rem", color: "var(--primary-blue)", display: "inline-flex", alignItems: "center", fontWeight: 700 }}>
+              (<Loader2 size={18} className="animate-spin" />)
+            </span>
+          ) : (
+            `(${comments.length})`
+          )}
         </h2>
       </div>
 
@@ -1072,6 +1082,23 @@ export default function CommentSection({ postId }: { postId: number }) {
               </button>
             </div>
           </form>
+        </div>
+      ) : authLoading ? (
+        <div
+          className="glass-panel"
+          style={{ padding: "1.5rem", marginBottom: "2.5rem" }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
+            <div className="skeleton skeleton-avatar" style={{ width: "40px", height: "40px", borderRadius: "50%" }} />
+            <div>
+              <div className="skeleton skeleton-text" style={{ width: "130px", height: "16px", marginBottom: "0.4rem" }} />
+              <div className="skeleton skeleton-text" style={{ width: "180px", height: "12px", marginBottom: 0 }} />
+            </div>
+          </div>
+          <div className="skeleton" style={{ width: "100%", height: "90px", borderRadius: "12px", marginBottom: "0.75rem" }} />
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <div className="skeleton" style={{ width: "135px", height: "40px", borderRadius: "12px" }} />
+          </div>
         </div>
       ) : (
         <div
