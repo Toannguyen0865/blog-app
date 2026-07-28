@@ -253,112 +253,114 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                       </div>
                     )}
                     <div className={styles.heroBody}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.5rem",
-                          marginBottom: "0.85rem",
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        <span
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "0.3rem",
-                            padding: "0.25rem 0.75rem",
-                            background: "rgba(37, 99, 235, 0.12)",
-                            color: "var(--primary-blue)",
-                            borderRadius: "20px",
-                            fontSize: "0.8rem",
-                            fontWeight: 600,
-                          }}
-                        >
-                          <Sparkles size={14} /> Nổi bật #{idx + 1}
-                        </span>
-                        <span
-                          style={{
-                            color: "var(--text-muted)",
-                            fontSize: "0.85rem",
-                          }}
-                        >
-                          &bull; Bởi {post.author}
-                        </span>
-                        <span
-                          style={{
-                            color: "var(--text-muted)",
-                            fontSize: "0.85rem",
-                          }}
-                        >
-                          &bull;{" "}
-                          {new Date(post.createdAt).toLocaleDateString("vi-VN")}
-                        </span>
-                      </div>
-
-                      {post.tags && (
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                         <div
                           style={{
                             display: "flex",
-                            gap: "0.4rem",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            marginBottom: "0.85rem",
                             flexWrap: "wrap",
-                            marginBottom: "0.65rem",
                           }}
                         >
-                          {post.tags.split(",").map((t: string) => {
-                            const cleanTag = t.trim().replace(/^#/, "");
-                            if (!cleanTag) return null;
-                            return (
-                              <span
-                                key={cleanTag}
-                                style={{
-                                  padding: "0.2rem 0.65rem",
-                                  background: "rgba(124, 58, 237, 0.12)",
-                                  color: "#7c3aed",
-                                  borderRadius: "14px",
-                                  fontSize: "0.78rem",
-                                  fontWeight: 600,
-                                }}
-                              >
-                                #{cleanTag}
-                              </span>
-                            );
-                          })}
+                          <span
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.3rem",
+                              padding: "0.25rem 0.75rem",
+                              background: "rgba(37, 99, 235, 0.12)",
+                              color: "var(--primary-blue)",
+                              borderRadius: "20px",
+                              fontSize: "0.8rem",
+                              fontWeight: 600,
+                            }}
+                          >
+                            <Sparkles size={14} /> Nổi bật #{idx + 1}
+                          </span>
+                          <span
+                            style={{
+                              color: "var(--text-muted)",
+                              fontSize: "0.85rem",
+                            }}
+                          >
+                            &bull; Bởi {post.author}
+                          </span>
+                          <span
+                            style={{
+                              color: "var(--text-muted)",
+                              fontSize: "0.85rem",
+                            }}
+                          >
+                            &bull;{" "}
+                            {new Date(post.createdAt).toLocaleDateString("vi-VN")}
+                          </span>
                         </div>
-                      )}
 
-                      <h2
-                        style={{
-                          fontSize: "1.85rem",
-                          fontWeight: 800,
-                          color: "var(--text-main)",
-                          marginBottom: "0.85rem",
-                          lineHeight: 1.35,
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                        }}
-                      >
-                        {post.title}
-                      </h2>
+                        {post.tags && (
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "0.4rem",
+                              flexWrap: "wrap",
+                              marginBottom: "0.65rem",
+                            }}
+                          >
+                            {post.tags.split(",").map((t: string) => {
+                              const cleanTag = t.trim().replace(/^#/, "");
+                              if (!cleanTag) return null;
+                              return (
+                                <span
+                                  key={cleanTag}
+                                  style={{
+                                    padding: "0.2rem 0.65rem",
+                                    background: "rgba(124, 58, 237, 0.12)",
+                                    color: "#7c3aed",
+                                    borderRadius: "14px",
+                                    fontSize: "0.78rem",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  #{cleanTag}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
 
-                      <p
-                        style={{
-                          color: "var(--text-muted)",
-                          lineHeight: 1.6,
-                          fontSize: "1.02rem",
-                          marginBottom: "1.5rem",
-                          display: "-webkit-box",
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                        }}
-                      >
-                        {post.content}
-                      </p>
+                        <h2
+                          style={{
+                            fontSize: "1.85rem",
+                            fontWeight: 800,
+                            color: "var(--text-main)",
+                            marginBottom: "0.85rem",
+                            lineHeight: 1.35,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {post.title}
+                        </h2>
 
-                      <div>
+                        <p
+                          style={{
+                            color: "var(--text-muted)",
+                            lineHeight: 1.6,
+                            fontSize: "1.02rem",
+                            marginBottom: "1.5rem",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {post.content}
+                        </p>
+                      </div>
+
+                      <div style={{ marginTop: "auto", paddingTop: "0.5rem" }}>
                         <span
                           className="btn-primary"
                           style={{

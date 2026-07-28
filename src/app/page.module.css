@@ -136,8 +136,11 @@
   }
   .heroBody {
     padding: 1.5rem !important;
-    height: auto !important;
-    min-height: 280px !important;
+    flex: 1 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
     overflow: visible !important;
   }
   .heroBody h2 {
@@ -200,8 +203,11 @@
   }
   .heroBody {
     padding: 1.15rem !important;
-    height: auto !important;
-    min-height: 260px !important;
+    flex: 1 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
   }
   .heroBody h2 {
     font-size: 1.15rem !important;
