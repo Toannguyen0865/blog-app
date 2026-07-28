@@ -192,7 +192,7 @@ function LoginForm() {
               </Link>
             </div>
 
-            <div style={{ marginTop: "1.25rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <div style={{ marginTop: "1.25rem" }}>
               <Link
                 href={returnUrl}
                 style={{
@@ -205,20 +205,6 @@ function LoginForm() {
               >
                 <ArrowLeft size={16} /> Quay lại trang trước
               </Link>
-
-              <div style={{ paddingTop: "0.75rem", borderTop: "1px dashed rgba(0,0,0,0.1)" }}>
-                <Link
-                  href="/admin/login"
-                  style={{
-                    fontSize: "0.85rem",
-                    color: "var(--primary-blue)",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                  }}
-                >
-                  🔐 Bạn là Quản trị viên? Đăng nhập hệ thống Admin tại đây
-                </Link>
-              </div>
             </div>
           </div>
         </form>
