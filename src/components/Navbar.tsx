@@ -60,18 +60,39 @@ export default function Navbar() {
     try {
       const res = await fetch("/api/auth/user/me", {
         cache: "no-store",
+        credentials: "include",
         headers: { "Cache-Control": "no-cache" },
       });
       if (res.ok) {
         const data = await res.json();
-        if (data.authenticated) {
+        if (data.authenticated && data.user) {
           setUser(data.user);
-        } else {
-          setUser(null);
+          setLoading(false);
+          return;
         }
-      } else {
-        setUser(null);
       }
+
+      // Nếu không phải Reader bình thường, kiểm tra xem có phải Quản trị viên (Admin) đang đăng nhập không
+      const adminRes = await fetch("/api/auth/admin/check", {
+        cache: "no-store",
+        credentials: "include",
+        headers: { "Cache-Control": "no-cache" },
+      });
+      if (adminRes.ok) {
+        const adminData = await adminRes.json();
+        if (adminData.authenticated && adminData.admin) {
+          setUser({
+            id: adminData.admin.id,
+            name: `${adminData.admin.username} (Admin)`,
+            email: "admin@devvibe.com",
+            avatar: null,
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
+      setUser(null);
     } catch (err) {
       setUser(null);
     } finally {
@@ -83,10 +104,12 @@ export default function Navbar() {
     const timer = setTimeout(fetchUser, 0);
     window.addEventListener("focus", fetchUser);
     window.addEventListener("user_auth_change", fetchUser);
+    window.addEventListener("admin_auth_change", fetchUser);
     return () => {
       clearTimeout(timer);
       window.removeEventListener("focus", fetchUser);
       window.removeEventListener("user_auth_change", fetchUser);
+      window.removeEventListener("admin_auth_change", fetchUser);
     };
   }, [pathname]);
 
@@ -103,9 +126,11 @@ export default function Navbar() {
       onConfirm: async () => {
         try {
           await fetch("/api/auth/user/logout", { method: "POST" });
+          await fetch("/api/auth/admin/logout", { method: "POST" }).catch(() => {});
           setUser(null);
           setNotifyModal(null);
           window.dispatchEvent(new Event("user_auth_change"));
+          window.dispatchEvent(new Event("admin_auth_change"));
           router.refresh();
         } catch (err) {
           setNotifyModal({
