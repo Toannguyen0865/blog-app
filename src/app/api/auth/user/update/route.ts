@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "@/lib/auth";
+import { signSession, verifySession } from "@/lib/session";
 
 const cleanImageUrl = (val: string): string => {
   let cleaned = val.trim();
@@ -31,7 +32,11 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Bạn chưa đăng nhập!" }, { status: 401 });
     }
 
-    const session = JSON.parse(sessionCookie.value);
+    const session = verifySession<{ id: number; name: string; email: string; loggedInAt?: number }>(sessionCookie.value);
+    if (!session || !session.id) {
+      return NextResponse.json({ error: "Phiên đăng nhập không hợp lệ!" }, { status: 401 });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: session.id },
     });
@@ -92,14 +97,14 @@ export async function PUT(request: Request) {
     });
 
     // Cập nhật cookie session
-    const sessionData = JSON.stringify({
+    const newSessionData = signSession({
       id: updatedUser.id,
       name: updatedUser.name,
       email: updatedUser.email,
       loggedInAt: session.loggedInAt || Date.now(),
     });
 
-    cookieStore.set("user_session", sessionData, {
+    cookieStore.set("user_session", newSessionData, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

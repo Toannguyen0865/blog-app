@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { verifyPassword } from "@/lib/auth";
+import { signSession } from "@/lib/session";
 
 export async function POST(request: Request) {
   try {
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const sessionData = JSON.stringify({
+    const sessionData = signSession({
       id: user.id,
       name: user.name,
       email: user.email,

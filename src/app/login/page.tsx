@@ -99,12 +99,25 @@ function LoginForm() {
             </div>
 
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label
-                className="form-label"
-                style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
-              >
-                <Lock size={16} /> Mật khẩu
-              </label>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                <label
+                  className="form-label"
+                  style={{ display: "flex", alignItems: "center", gap: "0.4rem", margin: 0 }}
+                >
+                  <Lock size={16} /> Mật khẩu
+                </label>
+                <Link
+                  href="/forgot-password"
+                  style={{
+                    fontSize: "0.85rem",
+                    color: "var(--primary-blue)",
+                    fontWeight: 650,
+                    textDecoration: "none",
+                  }}
+                >
+                  Quên mật khẩu?
+                </Link>
+              </div>
               <div style={{ position: "relative" }}>
                 <input
                   type={showPassword ? "text" : "password"}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
+import { verifySession } from "@/lib/session";
 
 // Helper kiểm tra xác thực người dùng từ cookie
 async function getAuthenticatedUser() {
@@ -12,7 +13,8 @@ async function getAuthenticatedUser() {
   }
 
   try {
-    const session = JSON.parse(sessionCookie.value);
+    const session = verifySession<{ id: number }>(sessionCookie.value);
+    if (!session || !session.id) return null;
     const user = await prisma.user.findUnique({
       where: { id: session.id },
     });

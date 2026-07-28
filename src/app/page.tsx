@@ -6,29 +6,33 @@ import SearchInput from "@/components/SearchInput";
 import TagBar from "@/components/TagBar";
 import HeroSlider from "@/components/HeroSlider";
 import Navbar from "@/components/Navbar";
+import Pagination from "@/components/Pagination";
 
 export const dynamic = "force-dynamic";
+
+const PAGE_SIZE = 9;
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; tag?: string; sort?: string }>;
+  searchParams: Promise<{ q?: string; tag?: string; sort?: string; page?: string }>;
 }) {
   const resolvedParams = await searchParams;
   const query = resolvedParams?.q || "";
   const tag = resolvedParams?.tag || "";
   const sort = resolvedParams?.sort || "desc";
+  const currentPage = Math.max(1, parseInt(resolvedParams?.page || "1", 10));
 
   const whereCondition: any = {};
   if (query) {
     whereCondition.OR = [
-      { title: { contains: query } },
-      { content: { contains: query } },
-      { tags: { contains: query } },
+      { title: { contains: query, mode: "insensitive" } },
+      { content: { contains: query, mode: "insensitive" } },
+      { tags: { contains: query, mode: "insensitive" } },
     ];
   }
   if (tag) {
-    whereCondition.tags = { contains: tag };
+    whereCondition.tags = { contains: tag, mode: "insensitive" };
   }
 
   let orderBy: any = { createdAt: "desc" };
@@ -38,17 +42,35 @@ export default async function Home({
     orderBy = { title: "asc" };
   }
 
-  const posts = await prisma.post.findMany({
-    where: Object.keys(whereCondition).length > 0 ? whereCondition : undefined,
-    orderBy,
-  });
-
   // Mục 4: Bài viết tiêu điểm (chỉ hiện ở trang chủ tổng khi không tìm kiếm, lọc hay sắp xếp khác)
   const isFiltering = Boolean(query || tag || sort !== "desc");
-  const featuredPosts = !isFiltering ? posts.slice(0, 3) : [];
-  const displayPosts = !isFiltering
-    ? posts.slice(Math.min(3, posts.length))
-    : posts;
+
+  // Lấy 3 bài viết đầu làm featured (chỉ khi không filter, không phân trang)
+  const featuredPosts = !isFiltering && currentPage === 1
+    ? await prisma.post.findMany({ orderBy, take: 3 })
+    : [];
+
+  // Đếm tổng bài viết cho phân trang
+  const totalCount = await prisma.post.count({
+    where: Object.keys(whereCondition).length > 0 ? whereCondition : undefined,
+  });
+
+  // Bài viết hiển thị ở grid (bỏ qua 3 bài featured ở trang 1 nếu không filter)
+  const skipFeatured = !isFiltering && currentPage === 1 ? 3 : 0;
+  const effectiveSkip = (currentPage - 1) * PAGE_SIZE + skipFeatured;
+  const effectiveTake = PAGE_SIZE - skipFeatured;
+
+  const displayPosts = await prisma.post.findMany({
+    where: Object.keys(whereCondition).length > 0 ? whereCondition : undefined,
+    orderBy,
+    skip: effectiveSkip,
+    take: effectiveTake,
+  });
+
+  // Tổng số trang (trừ 3 bài featured ở trang 1)
+  const effectiveTotal = isFiltering ? totalCount : Math.max(0, totalCount - 3);
+  const totalPages = Math.max(1, Math.ceil(effectiveTotal / PAGE_SIZE));
+
 
   return (
     <>
@@ -77,7 +99,7 @@ export default async function Home({
               lineHeight: 1.25,
             }}
           >
-            Khám phá thế giới Lập trình & Công nghệ
+            Khám phá thế giới Lập trình &amp; Công nghệ
           </h1>
           <p
             style={{
@@ -127,7 +149,7 @@ export default async function Home({
             {query ? (
               <>
                 <Search size={22} color="var(--primary-blue)" /> Kết quả tìm
-                kiếm cho "{query}"
+                kiếm cho &quot;{query}&quot;
               </>
             ) : tag ? (
               <>
@@ -148,7 +170,7 @@ export default async function Home({
               fontWeight: 500,
             }}
           >
-            {displayPosts.length} bài viết
+            {totalCount} bài viết
           </span>
         </div>
 
@@ -236,6 +258,15 @@ export default async function Home({
             ))
           )}
         </div>
+
+        {/* Phân trang */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          query={query}
+          tag={tag}
+          sort={sort}
+        />
       </main>
     </>
   );

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
+import { verifySession } from "@/lib/session";
 
 export async function GET(request: Request) {
   try {
@@ -58,7 +59,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const session = JSON.parse(sessionCookie.value);
+    // Xác thực chữ ký HMAC của session cookie
+    const session = verifySession<{ id: number }>(sessionCookie.value);
+    if (!session || !session.id) {
+      return NextResponse.json(
+        { error: "Phiên đăng nhập không hợp lệ!" },
+        { status: 401 },
+      );
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: session.id },
     });
@@ -102,13 +111,20 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("Post Comment Error:", error);
     let msg = "Có lỗi xảy ra khi gửi bình luận.";
-    if (error?.message?.includes("database is locked") || error?.message?.includes("SQLITE_BUSY")) {
-      msg = "Database đang bận hoặc bị khóa bởi Prisma Studio. Vui lòng thử lại!";
-    } else if (error?.message?.includes("Unknown argument") || error?.message?.includes("parentId")) {
-      msg = "Cấu trúc database mới chưa nhận vào bộ nhớ dev server. Vui lòng tắt terminal và chạy lại 'npm run dev'!";
+
+    // Xử lý lỗi PostgreSQL phổ biến
+    if (error?.code === "P2002") {
+      msg = "Bình luận này đã tồn tại (trùng lặp dữ liệu).";
+    } else if (error?.code === "P2003") {
+      msg = "Bài viết không tồn tại hoặc đã bị xóa!";
+    } else if (error?.code === "P2025") {
+      msg = "Dữ liệu liên quan không tìm thấy!";
+    } else if (error?.message?.includes("Connection") || error?.message?.includes("timeout")) {
+      msg = "Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau!";
     } else if (error?.message) {
       msg = `Lỗi hệ thống: ${error.message.slice(0, 120)}`;
     }
+
     return NextResponse.json(
       { error: msg },
       { status: 500 },

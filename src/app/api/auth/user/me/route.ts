@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
+import { verifySession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function GET() {
       return NextResponse.json({ authenticated: false }, { status: 200, headers: noCacheHeaders });
     }
 
-    const session = JSON.parse(sessionCookie.value);
+    const session = verifySession<{ id: number }>(sessionCookie.value);
 
     if (!session || !session.id) {
       return NextResponse.json({ authenticated: false }, { status: 200, headers: noCacheHeaders });

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
+import { verifySession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,9 +20,20 @@ export async function GET() {
       return NextResponse.json({ authenticated: false }, { status: 200, headers: noCacheHeaders });
     }
 
-    const sessionData = JSON.parse(sessionCookie.value);
-
+    // Xác thực chữ ký HMAC — chặn cookie giả mạo
+    const sessionData = verifySession<{ id: number; username: string }>(sessionCookie.value);
     if (!sessionData || !sessionData.id) {
+      return NextResponse.json({ authenticated: false }, { status: 200, headers: noCacheHeaders });
+    }
+
+    // Kiểm tra admin có thực sự tồn tại trong database hay không
+    const admin = await prisma.admin.findUnique({
+      where: { id: sessionData.id },
+      select: { id: true, username: true },
+    });
+
+    if (!admin) {
+      // Admin đã bị xóa khỏi DB → hủy phiên
       return NextResponse.json({ authenticated: false }, { status: 200, headers: noCacheHeaders });
     }
 
@@ -29,8 +41,8 @@ export async function GET() {
       {
         authenticated: true,
         admin: {
-          id: sessionData.id,
-          username: sessionData.username,
+          id: admin.id,
+          username: admin.username,
         },
       },
       { status: 200, headers: noCacheHeaders }

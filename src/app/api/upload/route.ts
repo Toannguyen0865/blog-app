@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import fs from "fs";
-import path from "path";
+import { verifySession } from "@/lib/session";
 
 export async function POST(request: Request) {
   try {
@@ -12,6 +11,14 @@ export async function POST(request: Request) {
     if (!sessionCookie || !sessionCookie.value) {
       return NextResponse.json(
         { error: "Bạn cần đăng nhập để tải ảnh lên!" },
+        { status: 401 }
+      );
+    }
+
+    const session = verifySession<{ id: number }>(sessionCookie.value);
+    if (!session || !session.id) {
+      return NextResponse.json(
+        { error: "Phiên đăng nhập không hợp lệ!" },
         { status: 401 }
       );
     }

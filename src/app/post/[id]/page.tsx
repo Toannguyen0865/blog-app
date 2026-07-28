@@ -7,7 +7,43 @@ import styles from "./page.module.css";
 import Navbar from "@/components/Navbar";
 import CommentSection from "@/components/CommentSection";
 
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  try {
+    const resolvedParams = await params;
+    const postId = parseInt(resolvedParams.id, 10);
+    if (isNaN(postId)) return { title: "Không tìm thấy bài viết | DevVibe Blog" };
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { title: true, content: true, author: true },
+    });
+
+    if (!post) return { title: "Không tìm thấy bài viết | DevVibe Blog" };
+
+    const desc = post.content.replace(/#+/g, "").replace(/\n/g, " ").slice(0, 160).trim() + "...";
+
+    return {
+      title: `${post.title} | DevVibe Blog`,
+      description: desc,
+      openGraph: {
+        title: post.title,
+        description: desc,
+        type: "article",
+        authors: [post.author],
+      },
+    };
+  } catch {
+    return { title: "DevVibe Blog - Nền tảng chia sẻ kiến thức" };
+  }
+}
 
 export default async function SinglePostPage({
   params,
