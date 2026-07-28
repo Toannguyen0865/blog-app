@@ -24,15 +24,7 @@ interface UserSession {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<UserSession | null>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cached = localStorage.getItem("devvibe_user_cache");
-        if (cached) return JSON.parse(cached);
-      } catch (e) {}
-    }
-    return null;
-  });
+  const [user, setUser] = useState<UserSession | null>(null);
   const [showMenu, setShowMenu] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notifyModal, setNotifyModal] = useState<NotificationModalProps | null>(null);
@@ -112,16 +104,22 @@ export default function Navbar() {
       } catch (e) {}
       setUser(null);
     } catch (err) {
-      try {
-        localStorage.removeItem("devvibe_user_cache");
-      } catch (e) {}
-      setUser(null);
+      // Khi chuyển trang hoặc abort request, tuyệt đối không xóa cache hay log out user
+      console.error("fetchUser error:", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("devvibe_user_cache");
+      if (cached) {
+        setUser(JSON.parse(cached));
+        setLoading(false);
+      }
+    } catch (e) {}
+
     const timer = setTimeout(fetchUser, 0);
     window.addEventListener("focus", fetchUser);
     window.addEventListener("user_auth_change", fetchUser);
@@ -132,7 +130,7 @@ export default function Navbar() {
       window.removeEventListener("user_auth_change", fetchUser);
       window.removeEventListener("admin_auth_change", fetchUser);
     };
-  }, [pathname]);
+  }, []);
 
   const handleLogout = () => {
     setShowMenu(false);

@@ -1,23 +1,24 @@
 .authContainer {
-  max-width: 860px;
+  max-width: 940px;
   margin: 2rem auto 4rem;
 }
 
 .authCard {
   text-align: left;
-  padding: 3rem 3.5rem !important;
+  padding: 3rem 2.8rem !important;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
   border-radius: 24px;
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 1.85rem;
   margin-bottom: 0.75rem;
   color: #7c3aed;
   font-weight: 850;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .subtitle {
@@ -29,9 +30,9 @@
 
 .splitForm {
   display: grid;
-  grid-template-columns: 1fr 1.15fr;
+  grid-template-columns: 1.05fr 1.1fr;
   grid-template-rows: auto 1fr;
-  column-gap: 3.5rem;
+  column-gap: 2.5rem;
   row-gap: 1.5rem;
 }
 
@@ -78,13 +79,17 @@
   color: var(--primary-blue);
 }
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
   .authContainer {
-    max-width: 480px;
+    max-width: 500px;
     margin: 1rem auto 3rem;
   }
   .authCard {
     padding: 2rem 1.5rem !important;
+  }
+  .title {
+    font-size: 1.65rem;
+    white-space: normal;
   }
   .splitForm {
     display: flex;
