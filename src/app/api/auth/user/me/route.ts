@@ -13,23 +13,18 @@ export async function GET() {
 
     const session = JSON.parse(sessionCookie.value);
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        avatar: true,
-      },
-    });
-
-    if (!user) {
+    if (!session || !session.id) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }
 
     return NextResponse.json({
       authenticated: true,
-      user,
+      user: {
+        id: session.id,
+        name: session.name,
+        email: session.email,
+        avatar: session.avatar || null,
+      },
     });
   } catch (error) {
     console.error("Check User Session Error:", error);

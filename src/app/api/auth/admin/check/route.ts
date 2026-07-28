@@ -17,18 +17,12 @@ export async function GET() {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }
 
-    const admin = await prisma.admin.findUnique({
-      where: { id: sessionData.id },
-      select: { id: true, username: true, createdAt: true },
-    });
-
-    if (!admin) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
-    }
-
     return NextResponse.json({
       authenticated: true,
-      admin,
+      admin: {
+        id: sessionData.id,
+        username: sessionData.username,
+      },
     });
   } catch (error) {
     return NextResponse.json({ authenticated: false }, { status: 401 });

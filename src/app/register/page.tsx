@@ -64,6 +64,7 @@ function RegisterForm() {
       const data = await res.json();
 
       if (res.ok) {
+        window.dispatchEvent(new Event("user_auth_change"));
         router.push(returnUrl);
         router.refresh();
       } else {
