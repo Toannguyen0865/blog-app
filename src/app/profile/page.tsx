@@ -235,11 +235,11 @@ export default function ProfilePage() {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       setNotifyModal({
         isOpen: true,
         title: "Ảnh quá lớn",
-        message: "Kích thước ảnh không được vượt quá 5MB!",
+        message: "Kích thước ảnh không được vượt quá 10MB!",
         type: "error",
         onClose: () => setNotifyModal(null),
       });

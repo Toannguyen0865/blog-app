@@ -195,6 +195,7 @@ export default function Navbar() {
                     </div>
                   )}
                   <span
+                    className="user-badge-name"
                     style={{
                       fontWeight: 700,
                       fontSize: "0.95rem",

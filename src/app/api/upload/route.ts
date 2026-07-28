@@ -30,41 +30,27 @@ export async function POST(request: Request) {
     // 3. Kiểm tra định dạng tệp (chỉ nhận hình ảnh)
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
-        { error: "Tệp tải lên phải là định dạng hình ảnh (.jpg, .png, .webp, .gif)!" },
+        { error: "Tệp tải lên phải là định dạng hình ảnh (.jpg, .png, .webp, .gif, .heic)!" },
         { status: 400 }
       );
     }
 
-    // 4. Kiểm tra kích thước tệp (giới hạn tối đa 5MB)
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    // 4. Kiểm tra kích thước tệp (giới hạn tối đa 10MB cho iPhone)
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { error: "Kích thước ảnh không được vượt quá 5MB!" },
+        { error: "Kích thước ảnh không được vượt quá 10MB!" },
         { status: 400 }
       );
     }
 
-    // 5. Chuyển đổi tệp thành Buffer
+    // 5. Chuyển đổi tệp thành Buffer và sang Data URL (base64) để tương thích 100% Vercel Serverless
+    // (Tránh lỗi EROFS: read-only file system khi chạy trên đám mây Vercel)
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
-    // 6. Tạo thư mục lưu trữ trong /public/uploads/avatars nếu chưa tồn tại
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "avatars");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    // 7. Tạo tên tệp duy nhất để không bị trùng lặp
-    const ext = file.name.split(".").pop() || "jpg";
-    const cleanExt = ext.replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "jpg";
-    const uniqueFilename = `avatar-${Date.now()}-${Math.floor(Math.random() * 10000)}.${cleanExt}`;
-    const filePath = path.join(uploadDir, uniqueFilename);
-
-    // 8. Ghi tệp vào hệ thống
-    fs.writeFileSync(filePath, buffer);
-
-    // 9. Trả về đường dẫn tĩnh để sử dụng trên giao diện
-    const fileUrl = `/uploads/avatars/${uniqueFilename}`;
+    const mimeType = file.type || "image/jpeg";
+    const base64String = buffer.toString("base64");
+    const fileUrl = `data:${mimeType};base64,${base64String}`;
 
     return NextResponse.json({
       success: true,
