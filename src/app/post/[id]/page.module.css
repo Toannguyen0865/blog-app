@@ -1,0 +1,79 @@
+.meta {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.markdownContent {
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.markdownContent h1,
+.markdownContent h2,
+.markdownContent h3,
+.markdownContent h4,
+.markdownContent h5,
+.markdownContent h6 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.markdownContent h2 {
+  font-size: 1.75rem;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 0.5rem;
+}
+
+.markdownContent p {
+  margin-bottom: 1.5rem;
+}
+
+.markdownContent ul,
+.markdownContent ol {
+  margin-bottom: 1.5rem;
+  padding-left: 2rem;
+}
+
+.markdownContent li {
+  margin-bottom: 0.5rem;
+}
+
+.markdownContent blockquote {
+  border-left: 4px solid var(--primary-blue);
+  padding-left: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+  background: rgba(37, 99, 235, 0.05);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.markdownContent pre {
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.markdownContent code {
+  font-family: monospace;
+  background: rgba(0,0,0,0.05);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.markdownContent pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.markdownContent img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
