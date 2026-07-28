@@ -8,13 +8,13 @@ export async function GET() {
     const sessionCookie = cookieStore.get("user_session");
 
     if (!sessionCookie || !sessionCookie.value) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return NextResponse.json({ authenticated: false }, { status: 200 });
     }
 
     const session = JSON.parse(sessionCookie.value);
 
     if (!session || !session.id) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return NextResponse.json({ authenticated: false }, { status: 200 });
     }
 
     return NextResponse.json({
@@ -28,6 +28,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Check User Session Error:", error);
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+    return NextResponse.json({ authenticated: false }, { status: 200 });
   }
 }

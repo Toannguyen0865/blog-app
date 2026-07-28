@@ -8,13 +8,13 @@ export async function GET() {
     const sessionCookie = cookieStore.get('admin_session');
 
     if (!sessionCookie || !sessionCookie.value) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return NextResponse.json({ authenticated: false }, { status: 200 });
     }
 
     const sessionData = JSON.parse(sessionCookie.value);
 
     if (!sessionData || !sessionData.id) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+      return NextResponse.json({ authenticated: false }, { status: 200 });
     }
 
     return NextResponse.json({
@@ -25,6 +25,6 @@ export async function GET() {
       },
     });
   } catch (error) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+    return NextResponse.json({ authenticated: false }, { status: 200 });
   }
 }
