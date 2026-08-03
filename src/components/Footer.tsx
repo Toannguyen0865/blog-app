@@ -87,7 +87,7 @@ export default function Footer() {
                 <LinkedInIcon size={18} />
               </a>
               <a
-                href="https://portfolio-henna-eight-89.vercel.app/"
+                href="https://toannguyen-portfolio.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-social-btn"
